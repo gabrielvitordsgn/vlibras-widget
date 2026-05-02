@@ -17,5 +17,52 @@
   <script>
     new window.VLibras.Widget('https://vlibras.gov.br');
   </script>
+
+  <script>
+    // SVG do ícone de acessibilidade (substitui access_icon.svg)
+    var accessIconSVG = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="32" fill="#1351B4"/>
+        <circle cx="32" cy="16" r="6" fill="white"/>
+        <rect x="29" y="24" width="6" height="16" rx="3" fill="white"/>
+        <rect x="16" y="27" width="32" height="6" rx="3" fill="white"/>
+        <rect x="20" y="38" width="6" height="14" rx="3" fill="white" transform="rotate(-15 23 45)"/>
+        <rect x="38" y="38" width="6" height="14" rx="3" fill="white" transform="rotate(15 41 45)"/>
+      </svg>
+    `)}`;
+
+    // JPG do popup (gradiente azul substitui access_popup.jpg)
+    var canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 400;
+    var ctx = canvas.getContext('2d');
+    var gradient = ctx.createLinearGradient(0, 0, 600, 400);
+    gradient.addColorStop(0, '#071D41');
+    gradient.addColorStop(1, '#1351B4');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 600, 400);
+    var accessPopupData = canvas.toDataURL('image/jpeg', 0.9);
+
+    function fixImages() {
+      var imgs = document.querySelectorAll('img');
+      imgs.forEach(function(img) {
+        if (img.src.includes('access_icon')) {
+          img.src = accessIconSVG;
+        }
+        if (img.src.includes('access_popup')) {
+          img.src = accessPopupData;
+        }
+      });
+    }
+
+    // Tenta substituir imediatamente e com delay para garantir que o widget carregou
+    setTimeout(fixImages, 500);
+    setTimeout(fixImages, 1500);
+    setTimeout(fixImages, 3000);
+
+    // Observa mudanças no DOM caso o widget injete imagens depois
+    var observer = new MutationObserver(fixImages);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
+  </script>
 </body>
 </html>
